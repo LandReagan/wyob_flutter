@@ -1,9 +1,9 @@
 List<String> months = [
-  "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
-  "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /// This function returns a properly formatted DateTime.
-/// Format: DDMMMYYYY HH:MM
+/// Format: DDMmmYYYY HH:MM
 /// with month as the standard 3 letters (e.g. JAN, FEB, MAR, etc.).
 String DateTimeToString(DateTime datetime) {
 
@@ -20,7 +20,7 @@ String DateTimeToString(DateTime datetime) {
 }
 
 /// This function returns a DateTime object out of a String.
-/// Format: DDMMMYYYY HH:MM
+/// Format: DDMmmYYYY HH:MM
 /// with month as the standard 3 letters (e.g. JAN, FEB, MAR, etc.).
 DateTime StringToDateTime(String txt) {
 
@@ -42,10 +42,75 @@ DateTime StringToDateTime(String txt) {
 
 String DurationToString(Duration duration) {
 
-  String hours = duration.inHours.toString();
-  String minutes = (duration.inMinutes ~/ 60).toString();
+  String sign = duration.isNegative ? "-" : "+";
+  String hours = duration.abs().inHours.toString();
+  String minutes = (duration.abs().inMinutes % 60).toString();
   hours.length < 2 ? hours = "0" + hours : null;
   minutes.length < 2 ? minutes = "0" + minutes : null;
 
-  return hours + ":" + minutes;
+  return sign + hours + ":" + minutes;
+}
+
+class AwareDT {
+
+  DateTime _utc;
+  DateTime _loc;
+
+  AwareDT.fromDateTimes(DateTime locDT, DateTime utcDT) {
+    _utc = utcDT;
+    _loc = locDT;
+  }
+
+  Duration get gmtDiff {
+    if (_utc == null || _loc == null) {
+      return new Duration(minutes: 0);
+    }
+    return _loc.difference(_utc);
+  }
+
+  /// Special constructor with an IOB string.
+  /// Format: DDMMMYYYY HH:MM (HH:MM) e.g. 01Jul2018 21:05 (20:05)
+  AwareDT.fromIobString(String txt) {
+
+    RegExp iobStringRegExp = new RegExp(
+      r'(\d{2})(\w{3})(\d{4})\s+(\d{2}):(\d{2})\s\((\d{2}):(\d{2})\)'
+    );
+
+    var match = iobStringRegExp.firstMatch(txt);
+
+    int day = int.parse(match.group(1));
+    int month = months.indexOf(match.group(2)) + 1;
+    int year = int.parse(match.group(3));
+    int hours = int.parse(match.group(4));
+    int minutes = int.parse(match.group(5));
+    int gmtHours = int.parse(match.group(6));
+    int gmtMinutes = int.parse(match.group(7));
+
+    _loc = new DateTime(year, month, day, hours, minutes);
+    _utc = new DateTime(year, month, day, gmtHours, gmtMinutes);
+
+    if (_loc.difference(_utc) > new Duration(hours: 12)) {
+      _utc = _utc.add(new Duration(days: 1));
+    }
+
+    if (_loc.difference(_utc) < new Duration(hours: -12)) {
+      _utc = _utc.add(new Duration(days: -1));
+    }
+  }
+
+  /// toString to reflect our format: DDMmmYYYY HH:MM +HH:MM
+  @override
+  String toString() {
+
+    String locDateTimeString = DateTimeToString(_loc);
+    String gmtDiffString = DurationToString(gmtDiff);
+
+    return locDateTimeString + " " + gmtDiffString;
+  }
+}
+
+void main()  {
+  String test = "01Jul2018 23:30 (01:30)";
+  AwareDT adt = new AwareDT.fromIobString(test);
+  print(adt);
 }

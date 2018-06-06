@@ -17,6 +17,8 @@ class Duty {
   DutyNature _nature;
   DateTime _startTime;
   DateTime _endTime;
+  DateTime _startTimeLoc;
+  DateTime _endTimeLoc;
   Airport _startPlace;
   Airport _endPlace;
   List<Flight> _flights;
@@ -24,6 +26,8 @@ class Duty {
   DutyNature get nature => _nature;
   DateTime get startTime => _startTime;
   DateTime get endTime => _endTime;
+  DateTime get startTimeLoc => _startTimeLoc;
+  DateTime get endTimeLoc => _endTimeLoc;
   Airport get startPlace => _startPlace;
   Airport get endPlace => _endPlace;
   Duration get duration {
@@ -36,6 +40,8 @@ class Duty {
   set nature (DutyNature nature) => _nature = nature;
   set startTime (DateTime time) => _startTime = time;
   set endTime (DateTime time) => _endTime = time;
+  set startTimeLoc (DateTime time) => _startTimeLoc = time;
+  set endTimeLoc (DateTime time) => _endTimeLoc = time;
   set startPlace (Airport airport) => _startPlace = airport;
   set endPlace (Airport airport) => _endPlace = airport;
 

@@ -7,21 +7,50 @@ void main() {
     test("Basic", () {
       DateTime datetime = new DateTime(1978, 11, 15, 3, 40);
       String result = DateTimeToString(datetime);
-      expect(result, equals("15NOV1978 03:40"));
+      expect(result, equals("15Nov1978 03:40"));
     });
 
     test("With all leading zeros", () {
       DateTime datetime = new DateTime(1978, 1, 3, 3, 6);
       String result = DateTimeToString(datetime);
-      expect(result, equals("03JAN1978 03:06"));
+      expect(result, equals("03Jan1978 03:06"));
     });
   });
 
   group("StringToDateTime function test", () {
     test("Basic", () {
-      String txt = "15NOV1978 03:40";
+      String txt = "15Nov1978 03:40";
       DateTime datetime = new DateTime(1978, 11, 15, 3, 40);
       expect(StringToDateTime(txt), equals(datetime));
+    });
+  });
+
+  group("AwareDT class tests", () {
+
+    test("toString method", () {
+
+      AwareDT awareDt = new AwareDT.fromDateTimes(
+        new DateTime(1978, 11, 15, 03, 40),
+        new DateTime(1978, 11, 15, 02, 40)
+      );
+
+      String testString = "15Nov1978 03:40 +01:00";
+
+      expect(awareDt.toString(), testString);
+    });
+
+    test("fromIobString constructor test", () {
+      String txt = "01Jul2018 21:05 (20:05)";
+      AwareDT awareDT = new AwareDT.fromIobString(txt);
+      String testString = "01Jul2018 21:05 +01:00";
+      expect(awareDT.toString(), testString);
+    });
+
+    test("Tricky fromIobString constructor test", () {
+      String txt = "01Jul2018 23:30 (01:30)";
+      AwareDT awareDT = new AwareDT.fromIobString(txt);
+      String testString = "01Jul2018 23:30 -02:00";
+      expect(awareDT.toString(), testString);
     });
   });
 }
