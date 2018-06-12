@@ -1,20 +1,22 @@
+import 'dart:convert' show json;
+
 import 'Airport.dart' show Airport;
 import 'Flight.dart' show Flight;
 import 'DateTimeUtils.dart';
 
-enum DutyNature {
-  LEAVE,
-  OFF,
-  GROUND,
-  SIMULATOR,
-  FLIGHT,
-}
+List<String> DutyNature = [
+  'LEAVE',
+  'OFF',
+  'GROUND',
+  'SIMULATOR',
+  'FLIGHT',
+];
 
 /// Duty class
 /// Representing a duty.
 class Duty {
 
-  DutyNature _nature;
+  String _nature;
   DateTime _startTime;
   DateTime _endTime;
   DateTime _startTimeLoc;
@@ -23,7 +25,9 @@ class Duty {
   Airport _endPlace;
   List<Flight> _flights;
 
-  DutyNature get nature => _nature;
+  Duty();
+
+  String get nature => _nature;
   DateTime get startTime => _startTime;
   DateTime get endTime => _endTime;
   DateTime get startTimeLoc => _startTimeLoc;
@@ -37,7 +41,9 @@ class Duty {
   List<Flight> get flights => _flights;
 
   //TODO: Add convenient setters with other types if needed.
-  set nature (DutyNature nature) => _nature = nature;
+  set nature (String nature) {
+    DutyNature.contains(nature) ? _nature = nature : _nature = "UNKNOWN";
+  }
   set startTime (DateTime time) => _startTime = time;
   set endTime (DateTime time) => _endTime = time;
   set startTimeLoc (DateTime time) => _startTimeLoc = time;
@@ -53,27 +59,7 @@ class Duty {
 
     String result = "|";
 
-    switch (_nature) {
-      case DutyNature.FLIGHT:
-        result += "FLIGHT   |";
-        break;
-      case DutyNature.GROUND:
-        result += "GROUND   |";
-        break;
-      case DutyNature.LEAVE:
-        result += "LEAVE    |";
-        break;
-      case DutyNature.OFF:
-        result += "OFF      |";
-        break;
-      case DutyNature.SIMULATOR:
-        result += "SIMULATOR|";
-        break;
-      default:
-        result += "UNKNOWN  |";
-        break;
-    }
-
+    nature == null ? result += 'UNKNOWN  |' : result += nature;
     startPlace == null ? result += 'XXX|' : result += startPlace.IATA + '|';
     startTime == null ? result += 'DDMMMYYYY HH:MM|' : result += DateTimeToString(startTime) + '|';
     endPlace == null ? result += 'XXX|' : result += endPlace.IATA + '|';
@@ -81,5 +67,35 @@ class Duty {
     result += DurationToString(duration) + '|';
 
     return result;
+  }
+
+  // JSON stuff
+  Duty.fromJson(Map<String, String> jsonObject) {
+    _nature = jsonObject['nature'];
+    _startTime = StringToDateTime(jsonObject['startTime']);
+    _endTime = StringToDateTime(jsonObject['endTime']);
+    _startTimeLoc = StringToDateTime(jsonObject['startTimeLoc']);
+    _endTimeLoc = StringToDateTime(jsonObject['endTimeLoc']);
+    _startPlace = new Airport()
+      ..IATA = jsonObject['startPlace'];
+    _endPlace = new Airport()
+      ..IATA = jsonObject['endPlace'];
+
+    // TODO: Flights
+  }
+
+  Map<String, String> toJson() {
+    Map<String, String> jsonDuty = {
+      'nature': _nature,
+      'startTime' : DateTimeToString(_startTime),
+      'endTime': DateTimeToString(_endTime),
+      'startTimeLoc': DateTimeToString(_startTimeLoc),
+      'endTimeLoc': DateTimeToString(_endTimeLoc),
+      'startPlace': _startPlace.IATA,
+      'endPlace': _endPlace.IATA,
+      // TODO: Flights
+    };
+
+    return jsonDuty;
   }
 }

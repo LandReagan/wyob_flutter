@@ -1,13 +1,13 @@
 import 'package:test/test.dart';
-import '../lib/Duty.dart' show DutyNature, Duty;
+import '../lib/Duty.dart';
 
 
 void main() {
 
   test("Nature getter unit test", () {
     var duty = new Duty();
-    duty.nature = DutyNature.FLIGHT;
-    expect(duty.nature, equals(DutyNature.FLIGHT));
+    duty.nature = "FLIGHT";
+    expect(duty.nature, equals("FLIGHT"));
   });
 
   group("DateTime and Duration tests", () {
@@ -23,7 +23,7 @@ void main() {
 
     test("Empty Duty toString()", () {
       var duty = new Duty();
-      expect(duty.toString(), '|UNKNOWN  |XXX|DDMMMYYYY HH:MM|XXX|DDMMMYYYY HH:MM|00:00|');
+      expect(duty.toString(), '|UNKNOWN  |XXX|DDMMMYYYY HH:MM|XXX|DDMMMYYYY HH:MM|+00:00|');
     });
   });
 }
