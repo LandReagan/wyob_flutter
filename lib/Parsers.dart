@@ -19,7 +19,7 @@ List<Map<String, String>> parseCheckinList(String txt) {
   // 2. Get table rows
 
   RegExp rowRegExp = new RegExp(
-    r"<tr>\s+(<td class='listitem_0'>[\S\s]*?</td>)+\s+</tr>",
+    r"<tr>\s+(<td class=\Slistitem(?:_alert)?_0\S>[\S\s]*?</td>)+\s+</tr>",
     multiLine: true,
   );
 
@@ -30,7 +30,7 @@ List<Map<String, String>> parseCheckinList(String txt) {
     rowTxt = rowTxt.replaceAll(new RegExp(r'\s+'), " ");
     rowTxt = rowTxt.replaceAll(new RegExp(r'<tr>'), "");
     rowTxt = rowTxt.replaceAll(new RegExp(r'</tr>'), "");
-    rowTxt = rowTxt.replaceAll(new RegExp(r"<td class='listitem_0'>"), "");
+    rowTxt = rowTxt.replaceAll(new RegExp(r"<td class=\Slistitem[\S\s]*?>"), "");
     rowTxt = rowTxt.replaceAll(new RegExp(r'</td>'), " - ");
     rowTxt = rowTxt.replaceAll(new RegExp(r'<td>'), "");
 
@@ -47,7 +47,7 @@ List<Map<String, String>> parseCheckinList(String txt) {
 
 void main() {
 
-  new File('chekin.txt').readAsString().then((content) {
+  new File('test/HTML files/checkinlist.htm').readAsString().then((content) {
     var checkinList = parseCheckinList(content);
     for(var checkinEntry in checkinList) {
       print(checkinEntry);

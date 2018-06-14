@@ -1,4 +1,7 @@
+import 'dart:async' show Future;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 void main() => runApp(new WyobApp());
 
@@ -55,10 +58,13 @@ class NextDutyTopWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Row(
       children: <Widget>[
+        /*
         new Container(
           child: new Text("DUTY LOGO\nDUTY LOGO\nDUTY LOGO\nDUTY LOGO"),
           color: Colors.lightBlueAccent,
         ),
+        */
+        new Image.asset('assets/duty-icon-flight-50.png'),
         new Expanded(
           child: new Container(
             color: Colors.blue,
