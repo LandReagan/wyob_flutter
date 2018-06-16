@@ -17,10 +17,8 @@ List<String> DutyNature = [
 class Duty {
 
   String _nature;
-  DateTime _startTime;
-  DateTime _endTime;
-  DateTime _startTimeLoc;
-  DateTime _endTimeLoc;
+  AwareDT _startTime;
+  AwareDT _endTime;
   Airport _startPlace;
   Airport _endPlace;
   List<Flight> _flights;
@@ -28,10 +26,8 @@ class Duty {
   Duty();
 
   String get nature => _nature;
-  DateTime get startTime => _startTime;
-  DateTime get endTime => _endTime;
-  DateTime get startTimeLoc => _startTimeLoc;
-  DateTime get endTimeLoc => _endTimeLoc;
+  AwareDT get startTime => _startTime;
+  AwareDT get endTime => _endTime;
   Airport get startPlace => _startPlace;
   Airport get endPlace => _endPlace;
   Duration get duration {
@@ -44,10 +40,8 @@ class Duty {
   set nature (String nature) {
     DutyNature.contains(nature) ? _nature = nature : _nature = "UNKNOWN";
   }
-  set startTime (DateTime time) => _startTime = time;
-  set endTime (DateTime time) => _endTime = time;
-  set startTimeLoc (DateTime time) => _startTimeLoc = time;
-  set endTimeLoc (DateTime time) => _endTimeLoc = time;
+  set startTime (AwareDT time) => _startTime = time;
+  set endTime (AwareDT time) => _endTime = time;
   set startPlace (Airport airport) => _startPlace = airport;
   set endPlace (Airport airport) => _endPlace = airport;
 
@@ -61,9 +55,11 @@ class Duty {
 
     nature == null ? result += 'UNKNOWN  |' : result += nature;
     startPlace == null ? result += 'XXX|' : result += startPlace.IATA + '|';
-    startTime == null ? result += 'DDMMMYYYY HH:MM|' : result += DateTimeToString(startTime) + '|';
+    startTime == null ?
+      result += 'DDMMMYYYY HH:MM|' : result += startTime.toString() + '|';
     endPlace == null ? result += 'XXX|' : result += endPlace.IATA + '|';
-    endTime == null ? result += 'DDMMMYYYY HH:MM|' : result += DateTimeToString(endTime) + '|';
+    endTime == null ?
+      result += 'DDMMMYYYY HH:MM|' : result += endTime.toString() + '|';
     result += DurationToString(duration) + '|';
 
     return result;
@@ -72,14 +68,10 @@ class Duty {
   // JSON stuff
   Duty.fromJson(Map<String, String> jsonObject) {
     _nature = jsonObject['nature'];
-    _startTime = StringToDateTime(jsonObject['startTime']);
-    _endTime = StringToDateTime(jsonObject['endTime']);
-    _startTimeLoc = StringToDateTime(jsonObject['startTimeLoc']);
-    _endTimeLoc = StringToDateTime(jsonObject['endTimeLoc']);
-    _startPlace = new Airport()
-      ..IATA = jsonObject['startPlace'];
-    _endPlace = new Airport()
-      ..IATA = jsonObject['endPlace'];
+    _startTime = new AwareDT.fromIobString(jsonObject['startTime']);
+    _endTime = new AwareDT.fromIobString(jsonObject['endTime']);
+    _startPlace = new Airport.fromIata(jsonObject['startPlace']);
+    _endPlace = new Airport.fromIata(jsonObject['endPlace']);
 
     // TODO: Flights
   }
@@ -87,10 +79,8 @@ class Duty {
   Map<String, String> toJson() {
     Map<String, String> jsonDuty = {
       'nature': _nature,
-      'startTime' : DateTimeToString(_startTime),
-      'endTime': DateTimeToString(_endTime),
-      'startTimeLoc': DateTimeToString(_startTimeLoc),
-      'endTimeLoc': DateTimeToString(_endTimeLoc),
+      'startTime' : _startTime.toString(),
+      'endTime': _endTime.toString(),
       'startPlace': _startPlace.IATA,
       'endPlace': _endPlace.IATA,
       // TODO: Flights

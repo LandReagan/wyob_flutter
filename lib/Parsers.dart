@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert' show json;
 
 List<Map<String, String>> parseCheckinList(String txt) {
 
@@ -47,11 +48,12 @@ List<Map<String, String>> parseCheckinList(String txt) {
 
 void main() {
 
-  new File('test/HTML files/checkinlist.htm').readAsString().then((content) {
-    var checkinList = parseCheckinList(content);
-    for(var checkinEntry in checkinList) {
-      print(checkinEntry);
-    }
-  });
+  File outFile = new File("checkin.json");
+  File inFile = new File("test/HTML files/checkinlist.htm");
 
+  String content = inFile.readAsStringSync();
+  List<Map<String, String>> checkinList = parseCheckinList(content);
+
+  String out = json.encode(checkinList);
+  outFile.writeAsStringSync(out);
 }

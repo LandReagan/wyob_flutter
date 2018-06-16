@@ -51,6 +51,24 @@ String DurationToString(Duration duration) {
   return sign + hours + ":" + minutes;
 }
 
+Duration StringToDuration(String txt) {
+
+  RegExp durationRegExp = new RegExp(
+    r"([\+|-])(\d{2}):(\d{2})"
+  );
+
+  var match = durationRegExp.firstMatch(txt);
+
+  Duration duration = new Duration(
+    hours: int.parse(match.group(2)),
+    minutes: int.parse(match.group(3))
+  );
+
+  if (match.group(1) == '-') { duration *= -1; }
+
+  return duration;
+}
+
 class AwareDT {
 
   DateTime _utc;
@@ -61,6 +79,8 @@ class AwareDT {
     _loc = locDT;
   }
 
+  DateTime get utc => _utc;
+  DateTime get loc => _loc;
   Duration get gmtDiff {
     if (_utc == null || _loc == null) {
       return new Duration(minutes: 0);
@@ -98,6 +118,10 @@ class AwareDT {
     }
   }
 
+  Duration difference (AwareDT before) {
+    return _utc.difference(before.utc);
+  }
+
   /// toString to reflect our format: DDMmmYYYY HH:MM +HH:MM
   @override
   String toString() {
@@ -106,6 +130,19 @@ class AwareDT {
     String gmtDiffString = DurationToString(gmtDiff);
 
     return locDateTimeString + " " + gmtDiffString;
+  }
+
+  /// fromString from our format: DDmmmYYYY HH:MM +HH:MM
+  AwareDT.fromString(String txt) {
+
+    RegExp txtRegExp = new RegExp(
+      r'(\d{2}\w{3}\d{4}\s+\d{2}:\d{2})\s+([\+|-]\d{2}:\d{2})'
+    );
+
+    var match = txtRegExp.firstMatch(txt);
+
+    _loc = StringToDateTime(match.group(1));
+    _utc = _loc.subtract(StringToDuration(match.group(2)));
   }
 }
 
