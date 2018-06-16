@@ -35,7 +35,11 @@ class Duty {
     _startPlace = new Airport.fromIata(jsonObject['startPlace']);
     _endPlace = new Airport.fromIata(jsonObject['endPlace']);
 
-    // TODO: Flights
+    List<Map<String, String>> jsonFlights = json.decode(jsonObject['flights']);
+
+    for (Map<String, String> jsonFlight in jsonFlights) {
+      _flights.add(new Flight.fromJson(jsonFlight));
+    }
   }
 
   Duty.fromIobMap(Map<String, String> iobMap) {
@@ -123,6 +127,15 @@ class Duty {
 
   // JSON stuff
   Map<String, String> toJson() {
+
+    String flightsEncoded = "[";
+
+    for (Flight flight in flights) {
+      flightsEncoded += json.encode(flight.toJson()) + ", ";
+    }
+
+    flightsEncoded += "]";
+
     Map<String, String> jsonDuty = {
       'nature': _nature,
       'code': _code,
@@ -130,7 +143,7 @@ class Duty {
       'endTime': _endTime.toString(),
       'startPlace': _startPlace.IATA,
       'endPlace': _endPlace.IATA,
-      // TODO: Flights
+      'flights': flightsEncoded,
     };
 
     return jsonDuty;

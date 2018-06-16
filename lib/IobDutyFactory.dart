@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'Flight.dart' show Flight;
 import 'Duty.dart' show Duty;
@@ -39,4 +40,6 @@ void main() {
   for (var duty in duties) {
     print(duty);
   }
+  File outFile = new File('duties.json');
+  outFile.writeAsStringSync(json.encode(duties));
 }
