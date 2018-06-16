@@ -1,5 +1,5 @@
-import 'package:wyob/Airport.dart' show Airport;
-import 'DateTimeUtils.dart' show AwareDT;
+import 'Airport.dart' show Airport;
+import 'DateTimeUtils.dart' show AwareDT, DurationToString;
 
 /// This class represents a flight
 class Flight {
@@ -20,6 +20,14 @@ class Flight {
     flightNumber = jsonObject['flightNumber'];
   }
 
+  Flight.fromIobMap(Map<String, String> iobMap) {
+    startTime = new AwareDT.fromIobString(iobMap['Start']);
+    endTime = new AwareDT.fromIobString(iobMap['End']);
+    startPlace = new Airport.fromIata(iobMap['From']);
+    endPlace = new Airport.fromIata(iobMap['To']);
+    flightNumber = iobMap['Flight'];
+  }
+
   Map<String, String> toJson() {
     Map<String, String> jsonFlight = {
       'startTime': startTime.toString(),
@@ -31,11 +39,19 @@ class Flight {
     return jsonFlight;
   }
 
-  Flight.fromIobMap(Map<String, String> iobMap) {
-    startTime = new AwareDT.fromIobString(iobMap['Start']);
-    endTime = new AwareDT.fromIobString(iobMap['End']);
-    startPlace = new Airport.fromIata(iobMap['From']);
-    endPlace = new Airport.fromIata(iobMap['To']);
-    flightNumber = iobMap['Flight'];
+  String toString() {
+
+    String result = "|";
+
+    flightNumber == null ? result += 'UNKNOWN  |' : result += flightNumber + '|';
+    startPlace == null ? result += 'XXX|' : result += startPlace.IATA + '|';
+    startTime == null ?
+    result += 'DDMMMYYYY HH:MM|' : result += startTime.toString() + '|';
+    endPlace == null ? result += 'XXX|' : result += endPlace.IATA + '|';
+    endTime == null ?
+    result += 'DDMMMYYYY HH:MM|' : result += endTime.toString() + '|';
+    result += DurationToString(duration) + '|';
+
+    return result;
   }
 }
