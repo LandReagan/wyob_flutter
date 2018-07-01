@@ -30,9 +30,6 @@ class Duty {
   Duty.fromJson(String jsonString) {
 
     Map<String, String> jsonObject = json.decode(jsonString);
-    print("###########################");
-    print(jsonObject);
-    print("###########################");
 
     _nature = jsonObject['nature'];
     _code = jsonObject['code'];
@@ -56,9 +53,15 @@ class Duty {
     _code = iobMap['Trip'];
 
     /// Nature
-    if (code.contains('OFF')) {
+    if (
+        code.contains('OFF') ||
+        code.contains('ROF')
+        ) {
       _nature = 'OFF';
-    } else if (code.contains('A/L')) {
+    } else if (
+        code.contains('A/L') ||
+        code.contains('PH LVE')
+        ) {
       _nature = 'LEAVE';
     } else if (
         code.contains('HS-AM') ||
