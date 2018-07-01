@@ -7,6 +7,8 @@ import '../lib/Parsers.dart' show parseCheckinList;
 
 
 void main() {
+  
+  String jsonDutyStringExample = "{\"nature\": \"FLIGHT\",\"code\": \"851-04\",\"startTime\": \"30Apr2017 08:15 +04:00\",\"endTime\": \"30Apr2017 21:40 +08:00\",\"startPlace\": \"MCT\",\"endPlace\": \"CAN\",\"flights\": \"[{\"startTime\":\"30Apr2017 09:45 +04:00\",\"endTime\":\"30Apr2017 21:10 +08:00\",\"startPlace\":\"MCT\",\"endPlace\":\"CAN\",\"flightNumber\":\"WY851\"}, ]\"}";
 
   test("Nature getter unit test", () {
     var duty = new Duty();
@@ -26,5 +28,11 @@ void main() {
     test("Duty.fromJson constructor", (){
 
     });
+    
+    test("Duty.toJson() method test", () {
+      Duty duty = new Duty.fromJson(jsonDutyStringExample);
+      print(duty);
+    });
   });
+  
 }

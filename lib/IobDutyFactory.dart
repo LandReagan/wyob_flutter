@@ -35,11 +35,13 @@ class IobDutyFactory {
 void main() {
 
   File inFile = new File("test/HTML files/checkinlist.htm");
+  File outFile = new File('duties.json');
   String testCheckinString = inFile.readAsStringSync();
   var duties = IobDutyFactory.run(testCheckinString);
-  for (var duty in duties) {
-    print(duty);
+  var jsonDuties = new Map<String, dynamic>();
+  for (var i = 0; i < duties.length; i++) {
+    jsonDuties[i.toString()] = duties[i].toMap();
   }
-  File outFile = new File('duties.json');
-  outFile.writeAsStringSync(json.encode(duties));
+  outFile.writeAsStringSync(json.encode(jsonDuties));
+
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'Airport.dart' show Airport;
 import 'DateTimeUtils.dart' show AwareDT, DurationToString;
 
@@ -12,7 +14,10 @@ class Flight {
 
   Duration get duration => endTime.difference(startTime);
 
-  Flight.fromJson(Map<String, String> jsonObject) {
+  Flight.fromJson(String jsonString) {
+
+    Map<String, dynamic> jsonObject = json.decode(jsonString);
+
     startTime = new AwareDT.fromString(jsonObject['startTime']);
     endTime = new AwareDT.fromString(jsonObject['endTime']);
     startPlace = new Airport.fromIata(jsonObject['startPlace']);
@@ -28,15 +33,19 @@ class Flight {
     flightNumber = iobMap['Flight'];
   }
 
-  Map<String, String> toJson() {
-    Map<String, String> jsonFlight = {
+  String toJson() {
+    return json.encode(this.toMap());
+  }
+
+  Map<String, String> toMap() {
+    Map<String, String> flightMap = {
       'startTime': startTime.toString(),
       'endTime': endTime.toString(),
       'startPlace': startPlace.IATA,
       'endPlace': endPlace.IATA,
       'flightNumber': flightNumber,
     };
-    return jsonFlight;
+    return flightMap;
   }
 
   String toString() {

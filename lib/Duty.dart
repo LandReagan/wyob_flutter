@@ -27,7 +27,13 @@ class Duty {
 
   Duty();
 
-  Duty.fromJson(Map<String, String> jsonObject) {
+  Duty.fromJson(String jsonString) {
+
+    Map<String, String> jsonObject = json.decode(jsonString);
+    print("###########################");
+    print(jsonObject);
+    print("###########################");
+
     _nature = jsonObject['nature'];
     _code = jsonObject['code'];
     _startTime = new AwareDT.fromIobString(jsonObject['startTime']);
@@ -38,7 +44,7 @@ class Duty {
     List<Map<String, String>> jsonFlights = json.decode(jsonObject['flights']);
 
     for (Map<String, String> jsonFlight in jsonFlights) {
-      _flights.add(new Flight.fromJson(jsonFlight));
+      _flights.add(new Flight.fromJson(json.encode(jsonFlight)));
     }
   }
 
@@ -104,7 +110,7 @@ class Duty {
     _flights.add(flight);
   }
 
-  toString() {
+  String toString() {
 
     String result = "|";
 
@@ -126,26 +132,30 @@ class Duty {
   }
 
   // JSON stuff
-  Map<String, String> toJson() {
 
-    String flightsEncoded = "[";
+  Map<String, dynamic> toMap() {
+
+    List<Map<String, String>> flightMaps = new List<Map<String, String>>();
 
     for (Flight flight in flights) {
-      flightsEncoded += json.encode(flight.toJson()) + ", ";
+      flightMaps.add(flight.toMap());
     }
 
-    flightsEncoded += "]";
-
-    Map<String, String> jsonDuty = {
+    Map<String, dynamic> dutyMap = {
       'nature': _nature,
       'code': _code,
       'startTime' : _startTime.toString(),
       'endTime': _endTime.toString(),
       'startPlace': _startPlace.IATA,
       'endPlace': _endPlace.IATA,
-      'flights': flightsEncoded,
+      'flights': flightMaps,
     };
 
-    return jsonDuty;
+    return dutyMap;
+  }
+
+  String toJson() {
+
+    return json.encode(this.toMap());
   }
 }
