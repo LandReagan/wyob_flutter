@@ -18,7 +18,7 @@ RegExp cookieRegExp = new RegExp(r'(JSESSIONID=\w+);');
 class IobConnect {
   
   static Future<String> run(String username, String password) async {
-    var file = new File("chekin.txt");
+
     http.Client client = new http.Client();
 
     String landingBodyWithToken = (await client.get(landingUrl)).body;
@@ -36,15 +36,6 @@ class IobConnect {
         await client.get(checkinListUrl, headers: {"Cookie": cookie})
     ).body;
 
-    // TODO: Remove this line below - debugging only
-    file.writeAsStringSync(checkinList);
-
     return checkinList;
   }
-}
-
-// TODO: Remove this main below - make proper testing!
-void main() async {
-  String res = await IobConnect.run('93429', '93429');
-  print(res);
 }

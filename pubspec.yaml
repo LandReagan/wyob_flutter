@@ -10,6 +10,8 @@ dependencies:
 
   html: any
 
+  path_provider: ^0.4.1
+
   flutter_test:
     sdk: flutter
 

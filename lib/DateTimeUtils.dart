@@ -79,13 +79,17 @@ class AwareDT {
     _loc = locDT;
   }
 
-  DateTime get utc => _utc;
-  DateTime get loc => _loc;
-  Duration get gmtDiff {
-    if (_utc == null || _loc == null) {
-      return new Duration(minutes: 0);
-    }
-    return _loc.difference(_utc);
+  /// fromString from our format: DDmmmYYYY HH:MM +HH:MM
+  AwareDT.fromString(String txt) {
+
+    RegExp txtRegExp = new RegExp(
+        r'(\d{2}\w{3}\d{4}\s+\d{2}:\d{2})\s+([\+|-]\d{2}:\d{2})'
+    );
+
+    var match = txtRegExp.firstMatch(txt);
+
+    _loc = StringToDateTime(match.group(1));
+    _utc = _loc.subtract(StringToDuration(match.group(2)));
   }
 
   /// Special constructor with an IOB string.
@@ -93,7 +97,7 @@ class AwareDT {
   AwareDT.fromIobString(String txt) {
 
     RegExp iobStringRegExp = new RegExp(
-      r'(\d{2})(\w{3})(\d{4})\s+(\d{2}):(\d{2})\s\((\d{2}):(\d{2})\)'
+        r'(\d{2})(\w{3})(\d{4})\s+(\d{2}):(\d{2})\s\((\d{2}):(\d{2})\)'
     );
 
     var match = iobStringRegExp.firstMatch(txt);
@@ -118,6 +122,31 @@ class AwareDT {
     }
   }
 
+  DateTime get utc => _utc;
+  DateTime get loc => _loc;
+  Duration get gmtDiff {
+    if (_utc == null || _loc == null) {
+      return new Duration(minutes: 0);
+    }
+    return _loc.difference(_utc);
+  }
+
+  String get localDayString {
+    String day = _loc.day.toString();
+    if (day.length < 2) { day = "0" + day; }
+    String month = months[_loc.month - 1];
+    String year = _loc.year.toString();
+    return day + month + year;
+  }
+
+  String get localTimeString {
+    String hour = _loc.hour.toString();
+    if (hour.length < 2) { hour = "0" + hour; }
+    String minute = _loc.minute.toString();
+    if (minute.length < 2) { minute = "0" + minute; }
+    return hour + ":" + minute + " loc";
+  }
+
   Duration difference (AwareDT before) {
     return _utc.difference(before.utc);
   }
@@ -131,23 +160,4 @@ class AwareDT {
 
     return locDateTimeString + " " + gmtDiffString;
   }
-
-  /// fromString from our format: DDmmmYYYY HH:MM +HH:MM
-  AwareDT.fromString(String txt) {
-
-    RegExp txtRegExp = new RegExp(
-      r'(\d{2}\w{3}\d{4}\s+\d{2}:\d{2})\s+([\+|-]\d{2}:\d{2})'
-    );
-
-    var match = txtRegExp.firstMatch(txt);
-
-    _loc = StringToDateTime(match.group(1));
-    _utc = _loc.subtract(StringToDuration(match.group(2)));
-  }
-}
-
-void main()  {
-  String test = "01Jul2018 23:30 (01:30)";
-  AwareDT adt = new AwareDT.fromIobString(test);
-  print(adt);
 }

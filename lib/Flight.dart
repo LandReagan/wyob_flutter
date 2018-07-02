@@ -14,6 +14,14 @@ class Flight {
 
   Duration get duration => endTime.difference(startTime);
 
+  Flight.fromMap(Map<String, dynamic> map) {
+    startTime = new AwareDT.fromString(map['startTime']);
+    endTime = new AwareDT.fromString(map['endTime']);
+    startPlace = new Airport.fromIata(map['startPlace']);
+    endPlace = new Airport.fromIata(map['endPlace']);
+    flightNumber = map['flightNumber'];
+  }
+
   Flight.fromJson(String jsonString) {
 
     Map<String, dynamic> jsonObject = json.decode(jsonString);

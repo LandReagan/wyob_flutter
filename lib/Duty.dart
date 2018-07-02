@@ -45,6 +45,20 @@ class Duty {
     }
   }
 
+  Duty.fromMap(Map<String, dynamic> map) {
+
+    nature = map['nature'];
+    code = map['code'];
+    startTime = new AwareDT.fromString(map['startTime']);
+    endTime = new AwareDT.fromString(map['endTime']);
+    startPlace = new Airport.fromIata(map['startPlace']);
+    endPlace = new Airport.fromIata(map['endPlace']);
+
+    for (var flightMap in map['flights']) {
+      flights.add(new Flight.fromMap(flightMap));
+    }
+  }
+
   Duty.fromIobMap(Map<String, String> iobMap) {
 
     RegExp flightRegExp = new RegExp(r'\d{3}-\d{2}');

@@ -34,4 +34,14 @@ void main() {
       expect(duty.nature, isNotNull);
     }
   });
+
+  test("Build duties from json file", () {
+    String jsonDuties = dutiesAsJsonFile.readAsStringSync();
+    Map<String, dynamic> dutyObjects = json.decode(jsonDuties);
+    List<Duty> duties = [];
+    dutyObjects.forEach((index, dutyObject) {
+      duties.add(new Duty.fromMap(dutyObject));
+    });
+    duties.forEach((duty) => print('$duty'));
+  });
 }
